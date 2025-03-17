@@ -22,7 +22,7 @@
   <li>✔ <b>Exclusive Android Customization</b> – Tweaks, Launchers, Icon Packs & more!</li>
   <li>✔ <b>Tech Updates & Guides</b> – Stay updated with Android's latest developments.</li>
 </ul>
-<p>📌 Follow our <b>YouTube Channel</b> 🎥 <a href="https://www.youtube.com/c/AndroidPortWorld">Android Port World</a> for tutorials & more!</p>
+<p>📌 Follow our <b>YouTube Channel</b> 🎥 <a href="https://youtube.com/@androidportworld?si=8OJZ3XRml7S2M8af">Android Port World</a> for tutorials & more!</p>
 
 ---
 
