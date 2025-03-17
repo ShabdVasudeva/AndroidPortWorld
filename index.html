@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APW | Android Port World</title>
+  
+  <script type="module" src="https://esm.run/@material/web/all.js"></script>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <h1>Android Port World</h1>
+    <button id="theme-toggle" class="theme-toggle">
+      <img src="light_mode.svg" class="icon light-icon" alt="Light Mode">
+      <img src="dark_mode.svg" class="icon dark-icon" alt="Dark Mode">
+    </button>
+  </header>
+  
+  <div class="container">
+    <md-outlined-text-field id="search" label="Search Posts..." trailing-icon="search"></md-outlined-text-field>
+    
+    <div id="content"></div>
+    <div id="news">📰 News Section Coming Soon!</div>
+  </div>
+  
+  <div class="bottom-nav">
+    <md-icon-button id="home-btn">
+      <span class="material-symbols-outlined">cottage</span>
+    </md-icon-button>
+    <md-icon-button id="news-btn">
+      <span class="material-symbols-outlined">newspaper</span>
+    </md-icon-button>
+  </div>
+  
+  <script src="script.js"></script>
+</body>
+
+</html>
