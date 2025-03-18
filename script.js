@@ -21,55 +21,82 @@ document.getElementById("news-btn").addEventListener("click", () => {
   document.getElementById("news").style.display = "block";
 });
 
+// Function to fetch all JSON files (GitHub first, then GitLab)
 async function fetchAllJsonFiles() {
-  await fetchJsonFromGitHub();
-  await fetchJsonFromGitLab();
+  document.getElementById("content").innerHTML = ""; // Clear content before fetching
+  let allFiles = [];
+
+  const githubFiles = await fetchJsonFromGitHub();
+  const gitlabFiles = await fetchJsonFromGitLab();
+  
+  allFiles = [...githubFiles, ...gitlabFiles]; // Merge GitHub and GitLab files
+
+  // Sort by most recent (assuming JSON includes a date or order mechanism)
+  allFiles.reverse(); // Newest JSON entries appear first
+
+  // Add each file's card to the DOM
+  allFiles.forEach(file => {
+    let imageUrl = file.source === "github"
+      ? `https://raw.githubusercontent.com/shabdvasudeva/Channel-Updates/main/${file.img}`
+      : `https://gitlab.com/shabdvasudeva/apw-database/-/raw/main/${file.img}`;
+    
+    createCard(file.title, file.instructions ?? "No description available", imageUrl, file.link);
+  });
 }
 
 async function fetchJsonFromGitHub() {
+  let filesList = [];
   try {
     let response = await fetch(GITHUB_BASE_URL);
+    if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+    
     let files = await response.json();
     let jsonFiles = files.filter(file => file.name.endsWith(".json"));
     
-    jsonFiles.forEach(file => fetchFiles(file.download_url, "github"));
+    for (let file of jsonFiles) {
+      let fileContent = await fetchFiles(file.download_url, "github");
+      filesList.push(...fileContent);
+    }
   } catch (error) {
     console.error("Error fetching GitHub repo contents:", error);
   }
+  return filesList;
 }
 
 async function fetchJsonFromGitLab() {
+  let filesList = [];
   try {
     let response = await fetch(GITLAB_TREE_URL);
+    if (!response.ok) throw new Error(`GitLab API error: ${response.status}`);
+    
     let files = await response.json();
     let jsonFiles = files.filter(file => file.name.endsWith(".json"));
     
-    jsonFiles.forEach(file => {
+    for (let file of jsonFiles) {
       let fileUrl = `${GITLAB_BASE_RAW}${encodeURIComponent(file.path)}/raw?ref=main`;
-      fetchFiles(fileUrl, "gitlab");
-    });
+      let fileContent = await fetchFiles(fileUrl, "gitlab");
+      filesList.push(...fileContent);
+    }
   } catch (error) {
     console.error("Error fetching GitLab repo contents:", error);
   }
+  return filesList;
 }
 
 async function fetchFiles(jsonUrl, source) {
   try {
     let response = await fetch(jsonUrl);
-    let files = await response.json();
+    if (!response.ok) throw new Error(`Error fetching JSON: ${jsonUrl} - Status: ${response.status}`);
     
-    files.forEach(file => {
-      let imageUrl = source === "github" ?
-        `https://raw.githubusercontent.com/shabdvasudeva/Channel-Updates/main/${file.img}` :
-        `https://gitlab.com/shabdvasudeva/apw-database/-/raw/main/${file.img}`;
-      
-      createCard(file.title, file.instructions, imageUrl, file.link);
-    });
+    let files = await response.json();
+    return files.map(file => ({ ...file, source })); // Attach source info
   } catch (error) {
     console.error(`Error fetching JSON from ${jsonUrl}:`, error);
+    return [];
   }
 }
 
+// Function to create and insert cards at the TOP
 function createCard(title, instructions, imageUrl, link) {
   let card = document.createElement("div");
   card.classList.add("card");
@@ -87,9 +114,13 @@ function createCard(title, instructions, imageUrl, link) {
   }
   
   card.innerHTML = htmlContent;
-  document.getElementById("content").appendChild(card);
+
+  // Insert at the beginning (newest first)
+  let contentDiv = document.getElementById("content");
+  contentDiv.insertBefore(card, contentDiv.firstChild);
 }
 
+// Search functionality
 document.getElementById("search").addEventListener("input", function() {
   let searchTerm = this.value.toLowerCase();
   document.querySelectorAll(".card").forEach(card => {
@@ -98,4 +129,5 @@ document.getElementById("search").addEventListener("input", function() {
   });
 });
 
+// Fetch JSON files on page load
 fetchAllJsonFiles();
